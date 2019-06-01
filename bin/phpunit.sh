@@ -4,6 +4,10 @@ if [[ ${RUN_PHPCS} == 1 ]]; then
 	exit
 fi
 
+if [[ ${SHOULD_DEPLOY} == 1 ]]; then
+	exit
+fi
+
 if [[ ${TRAVIS_PHP_VERSION:0:3} == "5.2" ]] ||
 	[[ ${TRAVIS_PHP_VERSION:0:3} == "5.3" ]] ||
 	[[ ${TRAVIS_PHP_VERSION:0:3} == "5.6" ]] ||

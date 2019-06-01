@@ -39,7 +39,7 @@ matrix:
     env: WP_VERSION=latest RUN_PHPCS=1
   - name: "PHP 7.3 unit tests and deployment to Pressable"
     php: 7.3
-    env: WP_VERSION=latest SHOULD_DEPLOY=yes
+    env: WP_VERSION=latest SHOULD_DEPLOY=1
     addons:
       apt:
         packages:
@@ -71,7 +71,7 @@ deploy:
   skip_cleanup: true
   on:
     branch: try/deploy
-    condition: $SHOULD_DEPLOY = "yes"
+    condition: $SHOULD_DEPLOY = 1
 
 branches:
   only:

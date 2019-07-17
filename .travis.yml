@@ -91,6 +91,6 @@ deploy:
     branch: master
     condition: $SHOULD_DEPLOY = 1
 
-branches:
-  only:
-    - master
+# branches:
+#   only:
+#     - master

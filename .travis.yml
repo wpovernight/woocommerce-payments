@@ -81,6 +81,7 @@ before_script:
     if [[ ${TRAVIS_PHP_VERSION:0:3} == "7.0" ]]; then
       echo "downloading phpunit"
       wget https://phar.phpunit.de/phpunit-6.5.14.phar
+      ls
     fi
 
 

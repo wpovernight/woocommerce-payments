@@ -12,6 +12,7 @@ elif [[ ${TRAVIS_PHP_VERSION:0:3} == "7.0" ]]; then
 	echo "PHPUnit testing with php 7.0"
 	php phpunit-6.5.14.phar --version
 	php phpunit-6.5.14.phar -c phpunit.xml.dist
+	pwd
 else
   ./vendor/bin/phpunit
 fi

@@ -1,212 +1,231 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Transactions list renders correctly 1`] = `
-<TableCard
-  baseSearchQuery={Object {}}
-  compareParam="filter"
-  downloadable={false}
-  headers={
-    Array [
-      Object {
-        "cellClassName": "info-button",
-        "key": "details",
-        "label": "",
-        "required": true,
-      },
-      Object {
-        "cellClassName": "date-time",
-        "defaultOrder": "desc",
-        "isLeftAligned": true,
-        "key": "created",
-        "label": "Date / Time",
-        "required": true,
-      },
-      Object {
-        "key": "type",
-        "label": "Type",
-        "required": true,
-      },
-      Object {
-        "isNumeric": true,
-        "key": "amount",
-        "label": "Amount",
-      },
-      Object {
-        "isNumeric": true,
-        "key": "fee",
-        "label": "Fees",
-      },
-      Object {
-        "isNumeric": true,
-        "key": "net",
-        "label": "Net",
-        "required": true,
-      },
-      Object {
-        "key": "order",
-        "label": "Order #",
-        "required": true,
-      },
-      Object {
-        "key": "source",
-        "label": "Source",
-      },
-      Object {
-        "key": "customer",
-        "label": "Customer",
-      },
-      Object {
-        "hiddenByDefault": true,
-        "key": "email",
-        "label": "Email",
-      },
-      Object {
-        "hiddenByDefault": true,
-        "key": "country",
-        "label": "Country",
-      },
-      Object {
-        "hiddenByDefault": true,
-        "key": "riskLevel",
-        "label": "Risk Level",
-      },
-    ]
-  }
-  isLoading={false}
-  onColumnsChange={[Function]}
-  onQueryChange={[Function]}
-  onSearch={[Function]}
-  query={Object {}}
-  rowHeader={0}
-  rows={
-    Array [
+<div>
+  <div>
+    <Notice
+      isDismissible={false}
+      status="warning"
+    >
+      <p>
+        Viewing test transactions. To view live transactions, disable test mode in WooCommerce Payments 
+        <a
+          href="/wp-admin/admin.php?page=wc-settings&tab=checkout&section=woocommerce_payments"
+        >
+          settings
+        </a>
+        .
+      </p>
+    </Notice>
+    <br />
+  </div>
+  <TableCard
+    baseSearchQuery={Object {}}
+    compareParam="filter"
+    downloadable={false}
+    headers={
       Array [
         Object {
-          "display": <Link
-            className="transaction-details-button"
-            href="admin.php?page=wc-admin&path=%2Fpayments%2Ftransactions%2Fdetails&id=txn_j23jda9JJa"
-            type="wc-admin"
-          >
-            <t
-              icon="info-outline"
-              size={18}
-            />
-          </Link>,
-          "value": "txn_j23jda9JJa",
+          "cellClassName": "info-button",
+          "key": "details",
+          "label": "",
+          "required": true,
         },
         Object {
-          "display": "Nov 1, 2019 / 2:46AM",
-          "value": 1572590800000,
+          "cellClassName": "date-time",
+          "defaultOrder": "desc",
+          "isLeftAligned": true,
+          "key": "created",
+          "label": "Date / Time",
+          "required": true,
         },
         Object {
-          "display": "Refund",
-          "value": "refund",
+          "key": "type",
+          "label": "Type",
+          "required": true,
         },
         Object {
-          "display": "$10.00",
-          "value": 10,
+          "isNumeric": true,
+          "key": "amount",
+          "label": "Amount",
         },
         Object {
-          "display": "$-0.50",
-          "value": 0.5,
+          "isNumeric": true,
+          "key": "fee",
+          "label": "Fees",
         },
         Object {
-          "display": "$9.50",
-          "value": 9.5,
+          "isNumeric": true,
+          "key": "net",
+          "label": "Net",
+          "required": true,
         },
         Object {
-          "display": <OrderLink />,
-          "value": undefined,
+          "key": "order",
+          "label": "Order #",
+          "required": true,
         },
         Object {
-          "display": <code>
-            visa
-          </code>,
-          "value": "visa",
+          "key": "source",
+          "label": "Source",
         },
         Object {
-          "display": "Another customer",
-          "value": "Another customer",
+          "key": "customer",
+          "label": "Customer",
         },
         Object {
-          "display": "another@customer.com",
-          "value": "another@customer.com",
+          "hiddenByDefault": true,
+          "key": "email",
+          "label": "Email",
         },
         Object {
-          "display": "US",
-          "value": "US",
+          "hiddenByDefault": true,
+          "key": "country",
+          "label": "Country",
         },
         Object {
-          "display": "High",
-          "value": "high",
+          "hiddenByDefault": true,
+          "key": "riskLevel",
+          "label": "Risk Level",
         },
-      ],
+      ]
+    }
+    isLoading={false}
+    onColumnsChange={[Function]}
+    onQueryChange={[Function]}
+    onSearch={[Function]}
+    query={Object {}}
+    rowHeader={0}
+    rows={
       Array [
-        Object {
-          "display": <Link
-            className="transaction-details-button"
-            href="admin.php?page=wc-admin&path=%2Fpayments%2Ftransactions%2Fdetails&id=txn_oa9kaKaa8"
-            type="wc-admin"
-          >
-            <t
-              icon="info-outline"
-              size={18}
-            />
-          </Link>,
-          "value": "txn_oa9kaKaa8",
-        },
-        Object {
-          "display": "Nov 1, 2019 / 12:00AM",
-          "value": 1572580800000,
-        },
-        Object {
-          "display": "Charge",
-          "value": "charge",
-        },
-        Object {
-          "display": "$15.00",
-          "value": 15,
-        },
-        Object {
-          "display": "$-0.50",
-          "value": 0.5,
-        },
-        Object {
-          "display": "$14.50",
-          "value": 14.5,
-        },
-        Object {
-          "display": <OrderLink />,
-          "value": undefined,
-        },
-        Object {
-          "display": <code>
-            visa
-          </code>,
-          "value": "visa",
-        },
-        Object {
-          "display": "My name",
-          "value": "My name",
-        },
-        Object {
-          "display": "a@b.com",
-          "value": "a@b.com",
-        },
-        Object {
-          "display": "US",
-          "value": "US",
-        },
-        Object {
-          "display": "Normal",
-          "value": "normal",
-        },
-      ],
-    ]
-  }
-  rowsPerPage={10}
-  showMenu={true}
-  title="Transactions"
-  totalRows={10}
-/>
+        Array [
+          Object {
+            "display": <Link
+              className="transaction-details-button"
+              href="admin.php?page=wc-admin&path=%2Fpayments%2Ftransactions%2Fdetails&id=txn_j23jda9JJa"
+              type="wc-admin"
+            >
+              <t
+                icon="info-outline"
+                size={18}
+              />
+            </Link>,
+            "value": "txn_j23jda9JJa",
+          },
+          Object {
+            "display": "Nov 1, 2019 / 2:46AM",
+            "value": 1572590800000,
+          },
+          Object {
+            "display": "Refund",
+            "value": "refund",
+          },
+          Object {
+            "display": "$10.00",
+            "value": 10,
+          },
+          Object {
+            "display": "$-0.50",
+            "value": 0.5,
+          },
+          Object {
+            "display": "$9.50",
+            "value": 9.5,
+          },
+          Object {
+            "display": <OrderLink />,
+            "value": undefined,
+          },
+          Object {
+            "display": <code>
+              visa
+            </code>,
+            "value": "visa",
+          },
+          Object {
+            "display": "Another customer",
+            "value": "Another customer",
+          },
+          Object {
+            "display": "another@customer.com",
+            "value": "another@customer.com",
+          },
+          Object {
+            "display": "US",
+            "value": "US",
+          },
+          Object {
+            "display": "High",
+            "value": "high",
+          },
+        ],
+        Array [
+          Object {
+            "display": <Link
+              className="transaction-details-button"
+              href="admin.php?page=wc-admin&path=%2Fpayments%2Ftransactions%2Fdetails&id=txn_oa9kaKaa8"
+              type="wc-admin"
+            >
+              <t
+                icon="info-outline"
+                size={18}
+              />
+            </Link>,
+            "value": "txn_oa9kaKaa8",
+          },
+          Object {
+            "display": "Nov 1, 2019 / 12:00AM",
+            "value": 1572580800000,
+          },
+          Object {
+            "display": "Charge",
+            "value": "charge",
+          },
+          Object {
+            "display": "$15.00",
+            "value": 15,
+          },
+          Object {
+            "display": "$-0.50",
+            "value": 0.5,
+          },
+          Object {
+            "display": "$14.50",
+            "value": 14.5,
+          },
+          Object {
+            "display": <OrderLink />,
+            "value": undefined,
+          },
+          Object {
+            "display": <code>
+              visa
+            </code>,
+            "value": "visa",
+          },
+          Object {
+            "display": "My name",
+            "value": "My name",
+          },
+          Object {
+            "display": "a@b.com",
+            "value": "a@b.com",
+          },
+          Object {
+            "display": "US",
+            "value": "US",
+          },
+          Object {
+            "display": "Normal",
+            "value": "normal",
+          },
+        ],
+      ]
+    }
+    rowsPerPage={10}
+    showMenu={true}
+    title="Transactions"
+    totalRows={10}
+  />
+</div>
 `;

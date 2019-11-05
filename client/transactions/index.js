@@ -10,6 +10,7 @@ import { TableCard, Link } from '@woocommerce/components';
 import { capitalize } from 'lodash';
 import Gridicon from 'gridicons';
 import { addQueryArgs } from '@wordpress/url';
+import { Notice } from '@wordpress/components';
 
 /**
  * Internal dependencies.
@@ -17,6 +18,7 @@ import { addQueryArgs } from '@wordpress/url';
 import withSelect from 'payments-api/with-select';
 import OrderLink from '../components/order-link';
 import './style.scss';
+import { isInTestMode } from '../util';
 
 // TODO make date / time, amount, fee, and net sortable - when date time is sortable, the background of the info buttons should match
 const headers = [
@@ -34,6 +36,16 @@ const headers = [
 	// TODO { key: 'deposit', label: 'Deposit', required: true },
 	{ key: 'riskLevel', label: 'Risk Level', hiddenByDefault: true },
 ];
+
+const notice = (
+	<div>
+		<Notice status="warning" isDismissible={ false }>
+			{ /* eslint-disable-next-line max-len */ }
+			<p>Viewing test transactions. To view live transactions, disable test mode in WooCommerce Payments <a href="/wp-admin/admin.php?page=wc-settings&tab=checkout&section=woocommerce_payments">settings</a>.</p>
+		</Notice>
+		<br />
+	</div>
+);
 
 export const TransactionsList = ( props ) => {
 	const { transactions, showPlaceholder } = props;
@@ -88,14 +100,17 @@ export const TransactionsList = ( props ) => {
 	} );
 
 	return (
-		<TableCard
-			title="Transactions"
-			isLoading={ showPlaceholder }
-			rowsPerPage={ 10 }
-			totalRows={ 10 }
-			headers={ headers }
-			rows={ rows }
-		/>
+		<div>
+			{ isInTestMode() ? notice : null }
+			<TableCard
+				title="Transactions"
+				isLoading={ showPlaceholder }
+				rowsPerPage={ 10 }
+				totalRows={ 10 }
+				headers={ headers }
+				rows={ rows }
+			/>
+		</div>
 	);
 };
 

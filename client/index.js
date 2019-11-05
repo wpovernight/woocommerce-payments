@@ -5,7 +5,6 @@
  */
 import { __ } from '@wordpress/i18n';
 import { addFilter } from '@wordpress/hooks';
-import { Notice } from '@wordpress/components';
 
 /**
  * Internal dependencies
@@ -15,34 +14,9 @@ import { HelloWorld } from 'hello-world';
 import TransactionsPage from 'transactions';
 import TransactionDetailsPage from 'transaction-details';
 import ConnectAccountPage from 'connect-account-page';
-import 'payments-api/payments-data-store';
 
 const DepositsPage = () => <HelloWorld>Hello from the deposits page</HelloWorld>;
 const DisputesPage = () => <HelloWorld>Hello from the disputes page</HelloWorld>;
-
-/**
- * Adds a test notice to a component if test mode is enabled.
- *
- * @param {Function} Component The component to be rendered.
- * @returns {Function} The component with a notice added, if applicable.
- */
-const withTestModeNotice = ( Component ) => {
-	const addNotice = () => (
-		<div>
-			<Notice status="warning" isDismissible={ false }>
-				<b>Test Mode Active:</b> All transactions are simulated. Customers can't make real purchases through WooCommerce Payments.
-			</Notice>
-			<br />
-		</div>
-	);
-
-	return ( ...props ) => (
-		<div>
-			{ '1' === wcpaySettings.test_mode ? addNotice() : null }
-			{ Component( ...props ) }
-		</div>
-	);
-};
 
 addFilter( 'woocommerce_admin_pages_list', 'woocommerce-payments', pages => {
 	const { menuID, rootLink } = getMenuSettings();
@@ -57,7 +31,7 @@ addFilter( 'woocommerce_admin_pages_list', 'woocommerce-payments', pages => {
         ],
     } );
     pages.push( {
-        container: withTestModeNotice( DepositsPage ),
+        container: DepositsPage,
         path: '/payments/deposits',
         wpOpenMenu: menuID,
         breadcrumbs: [
@@ -75,7 +49,7 @@ addFilter( 'woocommerce_admin_pages_list', 'woocommerce-payments', pages => {
         ],
     } );
     pages.push( {
-        container: withTestModeNotice( TransactionDetailsPage ),
+        container: TransactionDetailsPage,
         path: '/payments/transactions/details',
         wpOpenMenu: menuID,
         breadcrumbs: [
@@ -85,7 +59,7 @@ addFilter( 'woocommerce_admin_pages_list', 'woocommerce-payments', pages => {
         ],
     } );
     pages.push( {
-        container: withTestModeNotice( DisputesPage ),
+        container: DisputesPage,
         path: '/payments/disputes',
         wpOpenMenu: menuID,
         breadcrumbs: [

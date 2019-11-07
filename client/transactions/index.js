@@ -11,6 +11,7 @@ import { capitalize } from 'lodash';
 import Gridicon from 'gridicons';
 import { addQueryArgs } from '@wordpress/url';
 import { Notice } from '@wordpress/components';
+import { __ } from '@wordpress/i18n';
 
 /**
  * Internal dependencies.
@@ -37,11 +38,17 @@ const headers = [
 	{ key: 'riskLevel', label: 'Risk Level', hiddenByDefault: true },
 ];
 
+const noticeMessage = 'Viewing test transactions.' +
+	' To view live transactions, disable test mode in WooCommerce Payments';
+const settingsUrl = (
+	<a href="/wp-admin/admin.php?page=wc-settings&tab=checkout&section=woocommerce_payments">
+		{ __( 'settings', 'woocommerce-payments' ) }
+	</a>
+);
 const notice = (
 	<div>
 		<Notice status="warning" isDismissible={ false }>
-			{ /* eslint-disable-next-line max-len */ }
-			<p>Viewing test transactions. To view live transactions, disable test mode in WooCommerce Payments <a href="/wp-admin/admin.php?page=wc-settings&tab=checkout&section=woocommerce_payments">settings</a>.</p>
+			<p>{ __( noticeMessage, 'woocommerce-payments' ) } { settingsUrl }.</p>
 		</Notice>
 		<br />
 	</div>

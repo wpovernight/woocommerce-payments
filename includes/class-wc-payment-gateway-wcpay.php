@@ -9,8 +9,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-use Automattic\WooCommerce\Admin\Notes;
-
 /**
  * Gateway class for WooCommerce Payments
  */
@@ -129,6 +127,7 @@ class WC_Payment_Gateway_WCPay extends WC_Payment_Gateway_CC {
 	 */
 	public function admin_options() {
 		if ( ! class_exists( 'WC_Admin_Note' ) ) {
+			parent::admin_options();
 			return;
 		}
 

@@ -9,6 +9,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+use Automattic\WooCommerce\Admin\Notes;
+
 /**
  * Gateway class for WooCommerce Payments
  */
@@ -126,16 +128,41 @@ class WC_Payment_Gateway_WCPay extends WC_Payment_Gateway_CC {
 	 * Add notice to WooCommerce Payments settings page explaining test mode when it's enabled.
 	 */
 	public function admin_options() {
-		if ( $this->get_test_mode() ) {
-			?>
-			<div class="notice notice-warning">
-				<p>
-					<b><?php esc_html_e( 'Test Mode Active: ', 'woocommerce-payments' ); ?></b>
-					<?php esc_html_e( "All transactions are simulated. Customers can't make real purchases through WooCommerce Payments.", 'woocommerce-payments' ); ?>
-				</p>
-			</div>
-			<?php
+		if ( ! class_exists( 'WC_Admin_Note' ) ) {
+			return;
 		}
+
+		if ( ! class_exists( 'WC_Data_Store' ) ) {
+			parent::admin_options();
+			return;
+		}
+
+		if ( ! $this->get_test_mode() ) {
+			WC_Admin_Notes::delete_notes_with_name( 'woocommerce-payments-test-mode-active' );
+			parent::admin_options();
+			return;
+		}
+
+		// First, see if we've already created this kind of note so we don't do it again.
+		$note_ids = $data_store->get_notes_with_name( 'woocommerce-payments-test-mode-active' );
+		if ( ! empty( $note_ids ) ) {
+			parent::admin_options();
+			return;
+		}
+
+		$note = new WC_Admin_Note();
+		$note->set_title( __( 'Test mode active', 'woocommerce-payments' ) );
+		$note->set_content(
+			__(
+				"All transactions are simulated. Customers can't make real purchases through WooCommerce Payments.",
+				'woocommerce-payments'
+			)
+		);
+		$note->set_type( WC_Admin_Note::E_WC_ADMIN_NOTE_WARNING );
+		$note->set_icon( 'warning' );
+		$note->set_name( 'woocommerce-payments-test-mode-active' );
+		$note->set_source( 'woocommere-payments' );
+		$note->save();
 
 		parent::admin_options();
 	}

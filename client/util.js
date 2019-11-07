@@ -12,5 +12,5 @@ export const isInTestMode = ( defaultMode = true ) => {
 	if ( 'undefined' === typeof wcpaySettings ) {
 		return defaultMode;
 	}
-	return wcpaySettings.test_mode || defaultMode;
+	return wcpaySettings.testMode || defaultMode;
 };

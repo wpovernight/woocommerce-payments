@@ -9,6 +9,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+use \Automattic\WooCommerce\Admin\Notes\WC_Admin_Note;
+use \Automattic\WooCommerce\Admin\Notes\WC_Admin_Notes;
+
 /**
  * Gateway class for WooCommerce Payments
  */
@@ -126,15 +129,12 @@ class WC_Payment_Gateway_WCPay extends WC_Payment_Gateway_CC {
 	 * Add notice to WooCommerce Payments settings page explaining test mode when it's enabled.
 	 */
 	public function admin_options() {
-		if ( ! class_exists( 'WC_Admin_Note' ) ) {
+		if ( ! class_exists( '\Automattic\WooCommerce\Admin\Notes\WC_Admin_Note' ) ) {
 			parent::admin_options();
 			return;
 		}
 
-		if ( ! class_exists( 'WC_Data_Store' ) ) {
-			parent::admin_options();
-			return;
-		}
+		$data_store = \WC_Data_Store::load( 'admin-note' );
 
 		if ( ! $this->get_test_mode() ) {
 			WC_Admin_Notes::delete_notes_with_name( 'woocommerce-payments-test-mode-active' );
@@ -157,10 +157,10 @@ class WC_Payment_Gateway_WCPay extends WC_Payment_Gateway_CC {
 				'woocommerce-payments'
 			)
 		);
-		$note->set_type( WC_Admin_Note::E_WC_ADMIN_NOTE_WARNING );
+		$note->set_type( WC_Admin_Note::E_WC_ADMIN_NOTE_ERROR );
 		$note->set_icon( 'warning' );
 		$note->set_name( 'woocommerce-payments-test-mode-active' );
-		$note->set_source( 'woocommere-payments' );
+		$note->set_source( 'woocommerce-payments' );
 		$note->save();
 
 		parent::admin_options();

@@ -8,7 +8,7 @@
  */
 import 'payments-api/payments-data-store';
 
-export const isInTestMode = ( defaultMode = true ) => {
+export const isInTestMode = ( defaultMode = false ) => {
 	if ( 'undefined' === typeof wcpaySettings ) {
 		return defaultMode;
 	}

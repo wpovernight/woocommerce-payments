@@ -10,8 +10,7 @@ import { TableCard, Link } from '@woocommerce/components';
 import { capitalize } from 'lodash';
 import Gridicon from 'gridicons';
 import { addQueryArgs } from '@wordpress/url';
-import { Notice } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 
 /**
  * Internal dependencies.
@@ -19,7 +18,7 @@ import { __ } from '@wordpress/i18n';
 import withSelect from 'payments-api/with-select';
 import OrderLink from '../components/order-link';
 import './style.scss';
-import { isInTestMode } from '../util';
+import { updateNotice } from '../util';
 
 // TODO make date / time, amount, fee, and net sortable - when date time is sortable, the background of the info buttons should match
 const headers = [
@@ -37,22 +36,6 @@ const headers = [
 	// TODO { key: 'deposit', label: 'Deposit', required: true },
 	{ key: 'riskLevel', label: 'Risk Level', hiddenByDefault: true },
 ];
-
-const noticeMessage = 'Viewing test transactions.' +
-	' To view live transactions, disable test mode in WooCommerce Payments';
-const settingsUrl = (
-	<a href="/wp-admin/admin.php?page=wc-settings&tab=checkout&section=woocommerce_payments">
-		{ __( 'settings', 'woocommerce-payments' ) }
-	</a>
-);
-const notice = (
-	<div>
-		<Notice status="warning" isDismissible={ false }>
-			<p>{ __( noticeMessage, 'woocommerce-payments' ) } { settingsUrl }.</p>
-		</Notice>
-		<br />
-	</div>
-);
 
 export const TransactionsList = ( props ) => {
 	const { transactions, showPlaceholder } = props;
@@ -107,17 +90,14 @@ export const TransactionsList = ( props ) => {
 	} );
 
 	return (
-		<div>
-			{ isInTestMode() ? notice : null }
-			<TableCard
-				title="Transactions"
-				isLoading={ showPlaceholder }
-				rowsPerPage={ 10 }
-				totalRows={ 10 }
-				headers={ headers }
-				rows={ rows }
-			/>
-		</div>
+		<TableCard
+			title="Transactions"
+			isLoading={ showPlaceholder }
+			rowsPerPage={ 10 }
+			totalRows={ 10 }
+			headers={ headers }
+			rows={ rows }
+		/>
 	);
 };
 
@@ -125,6 +105,18 @@ export default withSelect( select => {
 	const { getTransactions, showTransactionsPlaceholder } = select( 'wc-payments-api' );
 	const transactions = getTransactions();
 	const showPlaceholder = showTransactionsPlaceholder();
+
+	updateNotice( select, sprintf(
+		__(
+			'Viewing test transactions. To view live transactions, disable test mode in WooCommerce Payments <a href="%1s">settings</a>.',
+			'woocommerce-payments',
+		),
+		addQueryArgs( 'admin.php', {
+			page: 'wc-settings',
+			tab: 'checkout',
+			section: 'woocommerce_payments',
+		} ),
+	) );
 
 	return { transactions, showPlaceholder };
 } )( TransactionsList );

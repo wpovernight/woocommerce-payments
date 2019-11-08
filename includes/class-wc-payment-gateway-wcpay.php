@@ -156,10 +156,10 @@ class WC_Payment_Gateway_WCPay extends WC_Payment_Gateway_CC {
 		}
 
 		$note = new WC_Admin_Note();
-		$note->set_title( __( 'Test mode active', 'woocommerce-payments' ) );
+		$note->set_title( __( 'WooCommerce Payments', 'woocommerce-payments' ) );
 		$note->set_content(
 			__(
-				"All transactions are simulated. Customers can't make real purchases through WooCommerce Payments.",
+				"Test mode active. All transactions are simulated. Customers can't make real purchases through WooCommerce Payments.",
 				'woocommerce-payments'
 			)
 		);

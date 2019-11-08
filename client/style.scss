@@ -1,12 +1,2 @@
-/**
- * This styling should probably not have to be applied. But it seems the component
- * styles are being overridden by something that's different from the Figma files,
- * see paJDYF-ng-p2.
- *
- * TODO: probably remove this later.
- */
-div.components-notice.is-warning {
-	margin-left: 0;
-	margin-right: 0;
-	background-color: #fef8ee;
-}
+/* stylelint-disable */
+/* stylelint-enable */

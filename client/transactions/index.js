@@ -106,17 +106,15 @@ export default withSelect( select => {
 	const transactions = getTransactions();
 	const showPlaceholder = showTransactionsPlaceholder();
 
-	updateNotice( select, sprintf(
+	const shouldDisplayNote = true;
+	updateNotice(
+		select,
+		shouldDisplayNote,
 		__(
-			'Viewing test transactions. To view live transactions, disable test mode in WooCommerce Payments <a href="%1s">settings</a>.',
+			'Viewing test transactions. To view live transactions, disable test mode in WooCommerce Payments settings.',
 			'woocommerce-payments',
-		),
-		addQueryArgs( 'admin.php', {
-			page: 'wc-settings',
-			tab: 'checkout',
-			section: 'woocommerce_payments',
-		} ),
-	) );
+		)
+	);
 
 	return { transactions, showPlaceholder };
 } )( TransactionsList );

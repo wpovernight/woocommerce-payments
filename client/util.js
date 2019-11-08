@@ -2,6 +2,7 @@
 /**
  * External dependencies
  */
+import { addQueryArgs } from '@wordpress/url';
 
 /**
  * Internal dependencies
@@ -15,7 +16,7 @@ export const isInTestMode = ( defaultMode = false ) => {
 	return wcpaySettings.testMode || defaultMode;
 };
 
-export const updateNotice = ( select, newContent ) => {
+export const updateNotice = ( select, display = false, newContent = '' ) => {
 	const { getNotes } = select( 'wc-api' );
 	const alertsQuery = {
 		page: 1,
@@ -30,5 +31,17 @@ export const updateNotice = ( select, newContent ) => {
 	if ( notes && notes.length > 0 ) {
 		const note = notes[ 0 ];
 		note.content = newContent;
+		note.status = display ? note.status : 'actioned';
+		note.actions = [ {
+			name: 'settings',
+			label: 'Open Settings',
+			status: 'unactioned',
+			primary: false,
+			url: addQueryArgs( 'admin.php', {
+				page: 'wc-settings',
+				tab: 'checkout',
+				section: 'woocommerce_payments',
+			} ),
+		} ];
 	}
 };

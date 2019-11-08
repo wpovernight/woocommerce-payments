@@ -25,6 +25,13 @@ class WC_Payment_Gateway_WCPay extends WC_Payment_Gateway_CC {
 	const GATEWAY_ID = 'woocommerce_payments';
 
 	/**
+	 * ID used for test mode notice.
+	 *
+	 * @type string
+	 */
+	const NOTE_NAME = 'woocommerce-payments-test-mode-active';
+
+	/**
 	 * Client for making requests to the WooCommerce Payments API
 	 *
 	 * @var WC_Payments_API_Client
@@ -129,23 +136,22 @@ class WC_Payment_Gateway_WCPay extends WC_Payment_Gateway_CC {
 	 * Add notice to WooCommerce Payments settings page explaining test mode when it's enabled.
 	 */
 	public function admin_options() {
+		parent::admin_options();
+
 		if ( ! class_exists( '\Automattic\WooCommerce\Admin\Notes\WC_Admin_Note' ) ) {
-			parent::admin_options();
 			return;
 		}
 
 		$data_store = \WC_Data_Store::load( 'admin-note' );
 
 		if ( ! $this->get_test_mode() ) {
-			WC_Admin_Notes::delete_notes_with_name( 'woocommerce-payments-test-mode-active' );
-			parent::admin_options();
+			WC_Admin_Notes::delete_notes_with_name( self::NOTE_NAME );
 			return;
 		}
 
 		// First, see if we've already created this kind of note so we don't do it again.
 		$note_ids = $data_store->get_notes_with_name( 'woocommerce-payments-test-mode-active' );
 		if ( ! empty( $note_ids ) ) {
-			parent::admin_options();
 			return;
 		}
 
@@ -157,13 +163,11 @@ class WC_Payment_Gateway_WCPay extends WC_Payment_Gateway_CC {
 				'woocommerce-payments'
 			)
 		);
-		$note->set_type( WC_Admin_Note::E_WC_ADMIN_NOTE_ERROR );
-		$note->set_icon( 'warning' );
-		$note->set_name( 'woocommerce-payments-test-mode-active' );
+		$note->set_type( WC_Admin_Note::E_WC_ADMIN_NOTE_UPDATE );
+		$note->set_icon( WC_Admin_Note::E_WC_ADMIN_NOTE_INFORMATIONAL );
+		$note->set_name( self::NOTE_NAME );
 		$note->set_source( 'woocommerce-payments' );
 		$note->save();
-
-		parent::admin_options();
 	}
 
 	/**

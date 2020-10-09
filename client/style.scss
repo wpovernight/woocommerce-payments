@@ -94,9 +94,18 @@
  * fixes the background color.
  */
 .wcpay-test-mode-notice.components-notice.is-warning {
-	margin: 24px 0;
+	margin: 0;
 	padding: 12px;
 	background-color: $studio-yellow-5;
+
+	&:first-child {
+		position: absolute;
+		top: 56px;
+		width: 100%;
+	}
+	&:last-child {
+		visibility: hidden;
+	}
 }
 
 .wcpay-connect-error-notice.components-notice {

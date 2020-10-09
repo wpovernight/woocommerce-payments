@@ -1,8 +1,11 @@
+/* global jQuery */
+
 /**
  * External dependencies
  */
 import { __, _n } from '@wordpress/i18n';
 import { Notice } from '@wordpress/components';
+import { useEffect, render } from '@wordpress/element';
 
 /**
  * Internal dependencies
@@ -99,14 +102,16 @@ export const getNoticeMessage = ( topic ) => {
 };
 
 /**
- * Returns a Notice element with the appropriate message based on the topic provided.
+ * Creates a Notice with the appropriate message based on the topic provided,
+ * wrapped in a component that renders it (once) higher in the DOM tree,
+ * duplicated so as to include both static (hidden) and absolute positioned instances.
  *
  * @param {string} topic The notice topic, also represents a page, e.g. 'transactions'.
  *
- * @returns {Notice} The notice element containing the appropriate message.
+ * @returns {null} Nothing to render directly.
  */
 export const getNotice = ( topic ) => {
-	return (
+	const notice = (
 		<Notice
 			className="wcpay-test-mode-notice"
 			status="warning"
@@ -115,6 +120,20 @@ export const getNotice = ( topic ) => {
 			{ getNoticeMessage( topic ) }
 		</Notice>
 	);
+
+	useEffect( () => {
+		render(
+			<>
+				{ notice }
+				{ notice /* Space-filling decoy. */ }
+			</>,
+			jQuery( '<div>' )
+				.insertBefore( '#woocommerce-layout__primary' )
+				.get( 0 )
+		);
+	}, [] );
+
+	return null;
 };
 
 /**

@@ -125,16 +125,20 @@ export const InsertedNotice = ( { topic } ) => {
 	);
 
 	useEffect( () => {
+		let $container = jQuery( '.wcpay-test-mode-notice-container' );
+		if ( ! $container.length ) {
+			$container = jQuery(
+				'<div class="wcpay-test-mode-notice-container">'
+			).insertBefore( '#woocommerce-layout__primary' );
+		}
 		render(
 			<>
 				{ notice }
 				{ notice /* Space-filling decoy. */ }
 			</>,
-			jQuery( '<div>' )
-				.insertBefore( '#woocommerce-layout__primary' )
-				.get( 0 )
+			$container.get( 0 )
 		);
-	}, [] );
+	}, [ topic ] );
 
 	return null;
 };

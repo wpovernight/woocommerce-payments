@@ -106,11 +106,11 @@ export const getNoticeMessage = ( topic ) => {
  * wrapped in a component that renders it (once) higher in the DOM tree,
  * duplicated so as to include both static (hidden) and absolute positioned instances.
  *
- * @param {string} topic The notice topic, also represents a page, e.g. 'transactions'.
+ * @param {object} props topic: The notice topic, also represents a page, e.g. 'transactions'.
  *
  * @returns {null} Nothing to render directly.
  */
-export const getNotice = ( topic ) => {
+export const InsertedNotice = ( { topic } ) => {
 	const notice = (
 		<Notice
 			className="wcpay-test-mode-notice"
@@ -145,10 +145,10 @@ export const getNotice = ( topic ) => {
  * @returns {function} The wrapped component, including a notice when applicable.
  */
 export const withTestNotice = ( Component, pageTopic ) => {
-	return ( props, ownProps ) => (
-		<div>
-			{ isInTestMode() ? getNotice( pageTopic ) : null }
-			{ Component( props, ownProps ) }
-		</div>
+	return ( props ) => (
+		<>
+			{ isInTestMode() ? <InsertedNotice topic={ pageTopic } /> : null }
+			<Component { ...props } />
+		</>
 	);
 };

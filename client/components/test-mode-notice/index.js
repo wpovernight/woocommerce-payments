@@ -5,7 +5,11 @@
  */
 import { __, _n } from '@wordpress/i18n';
 import { Notice } from '@wordpress/components';
-import { useEffect, render } from '@wordpress/element';
+import {
+	useEffect,
+	render,
+	__experimentalCreateInterpolateElement as createInterpolateElement,
+} from '@wordpress/element';
 
 /**
  * Internal dependencies
@@ -15,17 +19,17 @@ import { isInTestMode, getPaymentSettingsUrl } from '../../util';
 // The topics (i.e. pages) that have test mode notices.
 export const topics = {
 	transactions: __(
-		'Viewing test transactions. To view live transactions, disable test mode in WooCommerce Payments settings.',
+		'Viewing test transactions. To view live transactions, disable test mode in <a>WooCommerce Payments settings</a>.',
 		'woocommerce-payments'
 	),
 	paymentDetails: __( 'Test payment:', 'woocommerce-payments' ),
 	deposits: __(
-		'Viewing test deposits. To view live deposits, disable test mode in WooCommerce Payments settings.',
+		'Viewing test deposits. To view live deposits, disable test mode in <a>WooCommerce Payments settings</a>.',
 		'woocommerce-payments'
 	),
 	depositDetails: __( 'Test deposit:', 'woocommerce-payments' ),
 	disputes: __(
-		'Viewing test disputes. To view live disputes, disable test mode in WooCommerce Payments settings.',
+		'Viewing test disputes. To view live disputes, disable test mode in <a>WooCommerce Payments settings</a>.',
 		'woocommerce-payments'
 	),
 	disputeDetails: __( 'Test dispute:', 'woocommerce-payments' ),
@@ -94,11 +98,10 @@ export const getNoticeMessage = ( topic ) => {
 		);
 	}
 
-	return (
-		<span>
-			{ topic } { urlComponent }
-		</span>
-	);
+	return createInterpolateElement( topic, {
+		// eslint-disable-next-line jsx-a11y/anchor-has-content
+		a: <a href={ getPaymentSettingsUrl() } />,
+	} );
 };
 
 /**

@@ -6,7 +6,7 @@ import { __ } from '@wordpress/i18n';
 import { Card } from '@woocommerce/components';
 import { Button, Notice } from '@wordpress/components';
 import { useState } from '@wordpress/element';
-import { __experimentalCreateInterpolateElement as createInterpolateElement } from 'wordpress-element';
+import { createInterpolateElement } from 'wordpress-element';
 
 /**
  * Internal dependencies

@@ -8,7 +8,7 @@ import { Notice } from '@wordpress/components';
 import {
 	useEffect,
 	render,
-	__experimentalCreateInterpolateElement as createInterpolateElement,
+	createInterpolateElement,
 } from '@wordpress/element';
 
 /**

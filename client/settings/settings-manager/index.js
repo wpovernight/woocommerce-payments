@@ -9,15 +9,16 @@ import { useState } from 'react';
  * Internal dependencies
  */
 import PaymentMethods from '../../payment-methods';
+import GeneralSettings from 'settings/general-settings';
 
 const SettingsSection = ( { title, description, children } ) => (
-	<div className="settings-manager__section">
+	<li className="settings-manager__section">
 		<div className="settings-manager__section-details">
 			<h2>{ title }</h2>
-			<p>{ description }</p>
+			{ description && <p>{ description }</p> }
 		</div>
 		<div className="settings-manager__controls">{ children }</div>
-	</div>
+	</li>
 );
 
 const SettingsManager = ( {
@@ -28,7 +29,7 @@ const SettingsManager = ( {
 	);
 
 	return (
-		<div className="settings-manager">
+		<ul className="settings-manager">
 			<SettingsSection
 				title={ __(
 					'Payments accepted on checkout',
@@ -44,7 +45,10 @@ const SettingsManager = ( {
 					onEnabledMethodIdsChange={ setEnabledPaymentMethodIds }
 				/>
 			</SettingsSection>
-		</div>
+			<SettingsSection title={ __( 'Settings', 'woocommerce-payments' ) }>
+				<GeneralSettings />
+			</SettingsSection>
+		</ul>
 	);
 };
 

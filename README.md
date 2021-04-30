@@ -10,6 +10,8 @@ This is a feature plugin for accepting payments via a WooCommerce-branded paymen
 
 ### Install dependencies & build
 
+You should have composer installed on you system, please install it as per your OS.
+
 - `npm install`
 - `composer install`
 - `npm run build:client`

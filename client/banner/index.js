@@ -2,14 +2,14 @@
 /**
  * External dependencies
  */
-import { __ } from '@wordpress/i18n';
 import React from 'react';
 
 /**
  * Internal dependencies
  */
-import { Card, CardBody } from '@wordpress/components';
-import WCPayLogo from './wcpay-logo';
+import { CardHeader } from '@wordpress/components';
+import { WCPayLogo, RecommendedRibbon } from '@woocommerce/tasks';
+
 import './banner.scss';
 
 const Banner = ( { style } ) => {
@@ -27,19 +27,12 @@ const Banner = ( { style } ) => {
 		logoHeight = 70;
 		showPill = false;
 	}
+
 	return (
-		<Card size="large" className={ className }>
-			<CardBody>
-				<WCPayLogo width={ logoWidth } height={ logoHeight } />
-				{ showPill && (
-					<div className="woocommerce-payments-banner-pill">
-						<div>
-							{ __( 'Recommended', 'woocommerce-payments' ) }
-						</div>
-					</div>
-				) }
-			</CardBody>
-		</Card>
+		<CardHeader className={ className }>
+			<WCPayLogo width={ logoWidth } height={ logoHeight } />
+			{ showPill && <RecommendedRibbon isPill={ true } /> }
+		</CardHeader>
 	);
 };
 

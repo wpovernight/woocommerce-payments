@@ -2,32 +2,59 @@
 .woocommerce-account-status__controls .components-button.is-link {
 	text-decoration: none;
 }
-.woocommerce-account-status__header {
-	flex-wrap: wrap;
 
-	div {
+.wcpay-account-details-header-info {
+	display: flex;
+	flex: 1;
+	justify-content: space-between;
+	align-items: flex-start;
+
+	.account-details {
+		display: flex;
+		flex-wrap: wrap;
 		flex-shrink: 1;
-		flex-basis: auto;
+
+		&__heading {
+			margin-right: 10px;
+		}
 	}
+
+	.edit-details {
+		min-width: 100px;
+		display: flex;
+		justify-content: flex-end;
+	}
+}
+
+.woocommerce-account-status__header {
+	// display: flex;
+	// justify-content: space-between;
+
+	// flex-wrap: wrap;
+
+	// div {
+	// 	flex-shrink: 1;
+	// 	flex-basis: auto;
+	// }
 
 	// on a smaller viewports controls section should move in front of the
 	// status chip
-	@media only screen and ( max-width: 390px ) {
-		div:first-child {
-			flex-grow: 1;
-			order: -2;
-			margin-bottom: 8px;
-		}
-		div:last-child {
-			order: -1;
-			margin-bottom: 8px;
-		}
-	}
-	@media only screen and ( max-width: 390px ) {
-		div:last-child {
-			order: 1;
-		}
-	}
+	// @media only screen and ( max-width: 390px ) {
+	// 	div:first-child {
+	// 		flex-grow: 1;
+	// 		order: -2;
+	// 		margin-bottom: 8px;
+	// 	}
+	// 	div:last-child {
+	// 		order: -1;
+	// 		margin-bottom: 8px;
+	// 	}
+	// }
+	// @media only screen and ( max-width: 390px ) {
+	// 	div:last-child {
+	// 		order: 1;
+	// 	}
+	// }
 }
 .woocommerce-account-status-item {
 	line-height: 16px;

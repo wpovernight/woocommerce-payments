@@ -8,6 +8,7 @@ import {
 	Card,
 	CardBody,
 	CardHeader,
+	Flex,
 	FlexBlock,
 	FlexItem,
 } from '@wordpress/components';
@@ -60,17 +61,21 @@ const AccountStatusDetails = ( props ) => {
 
 	const cardTitle = (
 		<>
-			<FlexItem>
-				{ __( 'Account details', 'woocommerce-payments' ) }
-			</FlexItem>
-			<FlexBlock>
-				<StatusChip accountStatus={ accountStatus.status } />
-			</FlexBlock>
-			<FlexItem className={ 'woocommerce-account-status__controls' }>
-				<Button isLink href={ accountStatus.accountLink }>
-					{ __( 'Edit details', 'woocommerce-payments' ) }
-				</Button>
-			</FlexItem>
+			<div className="wcpay-account-details-header-info">
+				<div className="account-details">
+					<div className="account-details__heading">
+						{ __( 'Account details', 'woocommerce-payments' ) }
+					</div>
+					<div className="account-details__info-label">
+						<StatusChip accountStatus={ accountStatus.status } />
+					</div>
+				</div>
+				<div className="edit-details">
+					<Button isLink href={ accountStatus.accountLink }>
+						{ __( 'Edit details', 'woocommerce-payments' ) }
+					</Button>
+				</div>
+			</div>
 		</>
 	);
 

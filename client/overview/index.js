@@ -29,15 +29,20 @@ const OverviewPage = () => {
 		wpcomReconnectUrl,
 		featureFlags: { accountOverviewTaskList },
 	} = wcpaySettings;
-	const { disputes } = useDisputes( getQuery() );
 
+	const queryParams = getQuery();
+	/*eslint-disable camelcase*/
+	const { disputes } = useDisputes( {
+		...queryParams,
+		per_page: '5',
+	} );
+	/*eslint-enable camelcase*/
 	const tasks = getTasks( {
 		accountStatus,
 		showUpdateDetailsTask,
 		wpcomReconnectUrl,
 		disputes,
 	} );
-	const queryParams = getQuery();
 
 	const showKycSuccessNotice =
 		'1' === queryParams[ 'wcpay-connection-success' ];

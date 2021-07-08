@@ -74,9 +74,12 @@ class WC_REST_Payments_Disputes_Controller extends WC_Payments_REST_Controller {
 
 	/**
 	 * Retrieve disputes to respond with via API.
+	 *
+	 *  @param WP_REST_Request $request Full data about the request.
 	 */
-	public function get_disputes() {
-		return $this->forward_request( 'list_disputes', [] );
+	public function get_disputes( $request ) {
+		$page_size = (int) $request->get_param( 'pagesize' );
+		return $this->forward_request( 'list_disputes', [ $page_size ] );
 	}
 
 	/**

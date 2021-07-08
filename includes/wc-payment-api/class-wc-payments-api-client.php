@@ -645,12 +645,14 @@ class WC_Payments_API_Client {
 	/**
 	 * List disputes
 	 *
+	 * @param int $limit Amount of items to fetch.
+	 *
 	 * @return array
 	 * @throws API_Exception - Exception thrown on request failure.
 	 */
-	public function list_disputes() {
+	public function list_disputes( $limit = 25 ) {
 		$query = [
-			'limit' => 100,
+			'limit' => $limit,
 		];
 
 		$disputes = $this->request( $query, self::DISPUTES_API, self::GET );

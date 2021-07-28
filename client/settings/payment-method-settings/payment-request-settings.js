@@ -153,6 +153,7 @@ const PaymentRequestSettings = () => {
 					options={ buttonThemeOptions }
 					onChange={ setTheme }
 				/>
+				<p>{ __( 'Preview', 'woocommerce-payments' ) }</p>
 				<PaymentRequestButtonPreview />
 			</CardBody>
 		</Card>

@@ -65,7 +65,7 @@ class WC_Payments_Admin {
 
 		// Add menu items.
 		add_action( 'admin_menu', [ $this, 'add_payments_menu' ], 0 );
-		add_action( 'admin_menu', [ $this, 'maybe_redirect_to_onboarding' ], 1 );
+		add_action( 'admin_init', [ $this, 'maybe_redirect_to_onboarding' ], 11 ); // Run this after the WC setup wizard and onboarding redirection logic.
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_payments_scripts' ] );
 		add_action( 'woocommerce_admin_field_payment_gateways', [ $this, 'payment_gateways_container' ] );
 
@@ -374,6 +374,18 @@ class WC_Payments_Admin {
 
 		wp_localize_script(
 			'WCPAY_ADMIN_SETTINGS',
+			'wcpayPaymentRequestParams',
+			[
+				'stripe' => [
+					'publishableKey' => $this->account->get_publishable_key( $this->wcpay_gateway->is_in_test_mode() ),
+					'accountId'      => $this->account->get_stripe_account_id(),
+					'locale'         => WC_Payments_Utils::convert_to_stripe_locale( get_locale() ),
+				],
+			]
+		);
+
+		wp_localize_script(
+			'WCPAY_ADMIN_SETTINGS',
 			'wcpaySettings',
 			$wcpay_settings
 		);
@@ -650,7 +662,7 @@ class WC_Payments_Admin {
 			'yes' === get_option( 'woocommerce_allow_tracking' )
 		);
 
-		return 'treatment' === $abtest->get_variation( 'wcpay_empty_state_preview_mode_v1' );
+		return 'treatment' === $abtest->get_variation( 'wcpay_empty_state_preview_mode_v2' );
 	}
 
 	/**
@@ -658,6 +670,10 @@ class WC_Payments_Admin {
 	 * if it is not and the user is attempting to view a WCPay admin page.
 	 */
 	public function maybe_redirect_to_onboarding() {
+		if ( wp_doing_ajax() ) {
+			return;
+		}
+
 		if ( $this->is_in_treatment_mode() ) {
 			return;
 		}
@@ -684,7 +700,7 @@ class WC_Payments_Admin {
 			return;
 		}
 
-		if ( $this->account->is_stripe_connected() ) {
+		if ( $this->account->is_stripe_connected( true ) ) {
 			return;
 		}
 
@@ -700,7 +716,7 @@ class WC_Payments_Admin {
 		}
 
 		if ( WC_Payments_Features::is_upe_settings_preview_enabled() ) {
-			return true;
+			return false === WC_Payments_Features::did_merchant_disable_upe();
 		}
 
 		$available_methods = $this->wcpay_gateway->get_upe_available_payment_methods();

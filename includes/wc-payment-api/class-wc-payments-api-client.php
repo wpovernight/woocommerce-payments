@@ -262,6 +262,7 @@ class WC_Payments_API_Client {
 	 * @param array  $metadata                  - Meta data values to be sent along with payment intent creation.
 	 * @param array  $level3                    - Level 3 data.
 	 * @param string $selected_upe_payment_type - The name of the selected UPE payment type or empty string.
+	 * @param string $billing_country           - The billing country abbreviation.
 	 *
 	 * @return WC_Payments_API_Intention
 	 * @throws API_Exception - Exception thrown on intention creation failure.
@@ -274,7 +275,8 @@ class WC_Payments_API_Client {
 		$customer_id = '',
 		$metadata = [],
 		$level3 = [],
-		$selected_upe_payment_type = ''
+		$selected_upe_payment_type = '',
+		$billing_country = ''
 	) {
 		$request = [
 			'amount'      => $amount,
@@ -287,6 +289,10 @@ class WC_Payments_API_Client {
 		if ( '' !== $selected_upe_payment_type ) {
 			// Only update the payment_method_types if we have a reference to the payment type the customer selected.
 			$request['payment_method_types'] = [ $selected_upe_payment_type ];
+		}
+		if ( '' !== $billing_country ) {
+			// Only provide the billing country if one is available.
+			$request['billing_country'] = $billing_country;
 		}
 		if ( $customer_id ) {
 			$request['customer'] = $customer_id;

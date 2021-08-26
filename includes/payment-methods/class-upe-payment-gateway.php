@@ -161,8 +161,9 @@ class UPE_Payment_Gateway extends WC_Payment_Gateway_WCPay {
 		if ( ! is_a( $order, 'WC_Order' ) ) {
 			return;
 		}
-		$amount   = $order->get_total();
-		$currency = $order->get_currency();
+		$amount          = $order->get_total();
+		$currency        = $order->get_currency();
+		$billing_country = $order->get_billing_country();
 
 		if ( $payment_intent_id ) {
 			list( $user, $customer_id ) = $this->manage_customer_details_for_order( $order );
@@ -176,7 +177,8 @@ class UPE_Payment_Gateway extends WC_Payment_Gateway_WCPay {
 				$customer_id,
 				$this->get_metadata_from_order( $order, $payment_type ),
 				$this->get_level3_data_from_order( $order ),
-				$selected_upe_payment_type
+				$selected_upe_payment_type,
+				$billing_country
 			);
 		}
 
@@ -333,6 +335,7 @@ class UPE_Payment_Gateway extends WC_Payment_Gateway_WCPay {
 		$token                     = Payment_Information::get_token_from_request( $_POST ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
 		$selected_upe_payment_type = ! empty( $_POST['wcpay_selected_upe_payment_type'] ) ? wc_clean( wp_unslash( $_POST['wcpay_selected_upe_payment_type'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Missing
 		$payment_type              = $this->is_payment_recurring( $order_id ) ? Payment_Type::RECURRING() : Payment_Type::SINGLE();
+		$billing_country           = $order->get_billing_country();
 
 		if ( $payment_intent_id ) {
 			list( $user, $customer_id ) = $this->manage_customer_details_for_order( $order );
@@ -346,7 +349,8 @@ class UPE_Payment_Gateway extends WC_Payment_Gateway_WCPay {
 					$customer_id,
 					$this->get_metadata_from_order( $order, $payment_type ),
 					$this->get_level3_data_from_order( $order ),
-					$selected_upe_payment_type
+					$selected_upe_payment_type,
+					$billing_country
 				);
 			}
 		} else {

@@ -67,8 +67,8 @@ export const getTasks = ( {
 	}
 
 	return [
-		isAccountOverviewTasksEnabled &&
-			'yes' === showUpdateDetailsTask && {
+		( isAccountOverviewTasksEnabled && 'yes' === showUpdateDetailsTask ) ||
+			( true && {
 				key: 'update-business-details',
 				level: 1,
 				title: __(
@@ -76,9 +76,9 @@ export const getTasks = ( {
 					'woocommerce-payments'
 				),
 				content: accountDetailsTaskDescription,
-				completed: 'complete' === status,
+				completed: 'complete' === status && false,
 				action:
-					'complete' === status
+					'complete' === status && false
 						? undefined
 						: () => {
 								window.open( accountLink, '_blank' );
@@ -89,9 +89,9 @@ export const getTasks = ( {
 				expandable: true,
 				expanded: true,
 				showActionButton: true,
-			},
-		isAccountOverviewTasksEnabled &&
-			wpcomReconnectUrl && {
+			} ),
+		( isAccountOverviewTasksEnabled && wpcomReconnectUrl ) ||
+			( true && {
 				key: 'reconnect-wpcom-user',
 				level: 1,
 				title: __(
@@ -111,7 +111,7 @@ export const getTasks = ( {
 				expandable: true,
 				expanded: true,
 				showActionButton: true,
-			},
+			} ),
 		isAccountOverviewTasksEnabled &&
 			needsHttpsSetup && {
 				key: 'force-secure-checkout',

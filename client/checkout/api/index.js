@@ -539,4 +539,10 @@ export default class WCPayAPI {
 			...paymentData,
 		} );
 	}
+
+	initWooPay() {
+		return this.request( getPaymentRequestAjaxURL( 'init_woopay' ), {
+			_wpnonce: getPaymentRequestData( 'nonce' )?.checkout,
+		} );
+	}
 }

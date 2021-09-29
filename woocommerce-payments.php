@@ -126,3 +126,19 @@ function wcpay_show_old_jetpack_notice() {
 	</div>
 	<?php
 }
+
+add_filter( 'woocommerce_store_api_disable_nonce_check', '__return_true' );
+
+add_filter( 'determine_current_user', function( $user ) {
+	if ( $user ) {
+		return $user;
+	}
+	$headers = getallheaders();
+	if ( ! isset( $headers['X-WooPay-User'] ) || ! is_numeric( $headers['X-WooPay-User'] ) ) {
+		return $user;
+	}
+
+	add_filter( 'woocommerce_cookie', function( $c ) { return 'woopay_session'; } );
+
+	return (int) $headers['X-WooPay-User'];
+} );

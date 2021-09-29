@@ -992,6 +992,12 @@ class WC_Payment_Gateway_WCPay extends WC_Payment_Gateway_CC {
 			];
 		}
 
+		// Add card mandate options parameters to the order payment intent if needed.
+		$additional_api_parameters = array_merge(
+			$additional_api_parameters,
+			$this->maybe_add_mandate_to_order_payment( $order )
+		);
+
 		if ( $payment_needed ) {
 			// Create intention, try to confirm it & capture the charge (if 3DS is not required).
 			$intent = $this->payments_api_client->create_and_confirm_intention(

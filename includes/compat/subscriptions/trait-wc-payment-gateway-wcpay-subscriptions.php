@@ -706,4 +706,33 @@ trait WC_Payment_Gateway_WCPay_Subscriptions_Trait {
 			$wp->query_vars['order-pay'] = $this->order_pay_var;
 		}
 	}
+
+	/**
+	 * Add card mandate options parameters to the order payment intent if needed.
+	 * Only required for the subscription creation for card issued in India.
+	 * More details https://wp.me/pc4etw-ky
+	 *
+	 * @param WC_Order $order The order.
+	 * @return array Params to be included or empty array.
+	 */
+	public function maybe_add_mandate_to_order_payment( WC_Order $order ):  array {
+		$result = [];
+
+		if ( $this->is_subscriptions_enabled() ) {
+			$subscriptions = wcs_get_subscriptions_for_order( $order->get_id() );
+			$subscription  = reset( $subscriptions );
+			if ( $subscription ) {
+				$result['payment_method_options']['card']['mandate_options'] = [
+					'reference'      => $order->get_id(),
+					'amount'         => WC_Payments_Utils::prepare_amount( $order->get_total(), $order->get_currency() ),
+					'amount_type'    => 'fixed', // TODO: [fixed, maximum] Are there variable subscriptions?
+					'start_date'     => $subscription->get_time( 'date_created' ),
+					'interval'       => $subscription->get_billing_period(),
+					'interval_count' => $subscription->get_billing_interval(),
+				];
+			}
+		}
+
+		return $result;
+	}
 }

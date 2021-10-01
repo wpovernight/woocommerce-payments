@@ -273,6 +273,12 @@ class WC_REST_Payments_Webhook_Controller extends WC_Payments_REST_Controller {
 			);
 		}
 
+		// Save mandate id necessary for some subscriptions renewal.
+		$mandate_id = $event_body['data']['object']['charges']['data'][0]['payment_method_details']['card']['mandate'] ?? null;
+		if ( $mandate_id ) {
+			$order->update_meta_data( '_stripe_mandate_id', $mandate_id );
+		}
+
 		if ( ! $order->has_status( [ 'processing', 'completed' ] ) ) {
 			$order->payment_complete();
 		}

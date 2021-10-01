@@ -722,6 +722,7 @@ trait WC_Payment_Gateway_WCPay_Subscriptions_Trait {
 			$subscriptions = wcs_get_subscriptions_for_order( $order->get_id() );
 			$subscription  = reset( $subscriptions );
 			if ( $subscription ) {
+				$result['setup_future_usage']                                = 'off_session';
 				$result['payment_method_options']['card']['mandate_options'] = [
 					'reference'      => $order->get_id(),
 					'amount'         => WC_Payments_Utils::prepare_amount( $order->get_total(), $order->get_currency() ),

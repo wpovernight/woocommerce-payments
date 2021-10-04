@@ -2327,13 +2327,16 @@ class WC_Payment_Gateway_WCPay extends WC_Payment_Gateway_CC {
 	 * @return int|null Either the minimum amount (if the exception contains one)
 	 *                  or `null` whenever the exception is of another type.
 	 */
-	public function extract_minimum_amount( API_Exception $e, string $currency ) {
+	public function extract_minimum_amount( API_Exception $e, string $currency = null ) {
 		if ( 'amount_too_small' !== $e->get_error_code() ) {
 			return null;
 		}
 
 		$data     = $e->get_data();
 		$required = $data['minimum_amount'];
+		if ( ! $currency ) {
+			$currency = get_woocommerce_currency();
+		}
 
 		// Cache the result.
 		set_transient( 'wcpay_minimum_amount_' . strtolower( $currency ), $required, DAY_IN_SECONDS );
@@ -2361,14 +2364,18 @@ class WC_Payment_Gateway_WCPay extends WC_Payment_Gateway_CC {
 	 *
 	 * @return string A user-facing message.
 	 */
-	protected function generate_minimum_amount_error_message( $minimum_amount, $currency ) {
+	protected function generate_minimum_amount_error_message( $minimum_amount, $currency = null ) {
+		if ( ! $currency ) {
+			$currency = get_woocommerce_currency();
+		}
+
 		$interpreted_amount = WC_Payments_Utils::interpret_stripe_amount( $minimum_amount, $currency );
 		$price              = wc_price( $interpreted_amount, [ 'currency' => strtoupper( $currency ) ] );
 
 		return sprintf(
 			// translators: %1: payment method name, %2 a formatted price.
 			__(
-				'The selected payment method (%1$s) requires a total amount of at least %2$s.',
+				'This payment method requires a total amount of at least %2$s.',
 				'woocommerce-payments'
 			),
 			$this->title,

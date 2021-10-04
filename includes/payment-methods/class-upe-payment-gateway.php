@@ -242,39 +242,21 @@ class UPE_Payment_Gateway extends WC_Payment_Gateway_WCPay {
 
 		$minimum_amount = $this->get_cached_minimum_amount( $currency );
 		if ( ! is_null( $minimum_amount ) && $converted_amount < $minimum_amount ) {
-			// Use the minimum amount in order to create an intent and display fields.
-			$converted_amount = $minimum_amount;
+			$exception = new API_Exception( 'Amount too small', 'amount_too_small', 400 );
+			$exception->set_data( [
+				'minimum_amount' => $minimum_amount,
+			] );
+			throw $exception;
 		}
 
 		$enabled_payment_methods = array_filter( $this->get_upe_enabled_payment_method_ids(), [ $this, 'is_enabled_at_checkout' ] );
 
-		try {
-			$payment_intent = $this->payments_api_client->create_intention(
-				$converted_amount,
-				strtolower( $currency ),
-				array_values( $enabled_payment_methods ),
-				$order_id ?? 0
-			);
-		} catch ( API_Exception $e ) {
-			$minimum_amount = $this->extract_minimum_amount( $e, $currency );
-			if ( ! is_null( $minimum_amount ) ) {
-				/**
-				 * Try to create a new payment intent with the minimum amount
-				 * in order to display fields om the checkout page and allow
-				 * customers to select a shipping method, which might make
-				 * the total amount of the order higher than the minimum
-				 * amount for the API.
-				 */
-				$payment_intent = $this->payments_api_client->create_intention(
-					$minimum_amount,
-					strtolower( $currency ),
-					array_values( $enabled_payment_methods ),
-					$order_id ?? 0
-				);
-			} else {
-				throw $e;
-			}
-		}
+		$payment_intent = $this->payments_api_client->create_intention(
+			$converted_amount,
+			strtolower( $currency ),
+			array_values( $enabled_payment_methods ),
+			$order_id ?? 0
+		);
 
 		return [
 			'id'            => $payment_intent->get_id(),
@@ -712,6 +694,29 @@ class UPE_Payment_Gateway extends WC_Payment_Gateway_WCPay {
 		$order->save();
 	}
 
+	private function get_intent_from_checkout_post_data() {
+		 // phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.Sanitization.Missing
+		$post_data = isset( $_POST['post_data'] ) ? wp_unslash( $_POST['post_data'] ) : '';
+
+		if ( empty( $post_data ) ) {
+			return null;
+		}
+
+		parse_str( $post_data, $post_data_arr );
+		if ( ! isset( $post_data_arr['wcpay_intent'] ) || strlen( $post_data_arr['wcpay_intent'] ) <= 0 ) {
+			return null;
+		}
+
+		$existing_intent = json_decode( $post_data_arr['wcpay_intent'], true );
+		if ( ! $existing_intent || ! isset( $existing_intent['id'] ) ) {
+			return null;
+		}
+
+		$intent = $this->payments_api_client->get_intent( $existing_intent['id'] );
+
+		return $intent ? $intent : null;
+	}
+
 	/**
 	 * Renders the UPE input fields needed to get the user's payment information on the checkout page.
 	 *
@@ -719,9 +724,35 @@ class UPE_Payment_Gateway extends WC_Payment_Gateway_WCPay {
 	 */
 	public function payment_fields() {
 		try {
-			$display_tokenization = $this->supports( 'tokenization' ) && is_checkout();
+			/**
+			 * An error message could be displayed instead of fields,
+			 * but scripts and their configuration should still be loaded
+			 * for when checkout partials get reloaded.
+			 */
+			$error_message = null;
 
-			$payment_fields = $this->get_payment_fields_js_config();
+			$display_tokenization = $this->supports( 'tokenization' ) && is_checkout();
+			$payment_fields       = $this->get_payment_fields_js_config();
+
+			// Try to prepare the intent in advance.
+			try {
+				$existing_intent = $this->get_intent_from_checkout_post_data();
+				if ( $existing_intent ) {
+					// $intent = $this->payments_api_client->update_intention( )
+				} else {
+					$intent = $this->create_payment_intent();
+				}
+			} catch ( API_Exception $e ) {
+				$minimum_amount = $this->extract_minimum_amount( $e );
+				if ( ! is_null( $minimum_amount ) ) {
+					$error_message = $this->generate_minimum_amount_error_message( $minimum_amount );
+				} else {
+					throw $e;
+				}
+			} catch ( Exception $e ) {
+				$error_message = $e->getMessage();
+			}
+
 			wp_localize_script( 'wcpay-upe-checkout', 'wcpay_config', $payment_fields );
 			wp_enqueue_script( 'wcpay-upe-checkout' );
 
@@ -759,6 +790,17 @@ class UPE_Payment_Gateway extends WC_Payment_Gateway_WCPay {
 			<?php endif; ?>
 
 			<?php
+			if ( $error_message ) {
+				?>
+				<div class="woocommerce-error">
+					<?php echo esc_html( $error_message ); ?>
+				</div>
+				<?php
+				return;
+			}
+			?>
+
+			<?php
 			if ( $display_tokenization ) {
 				$this->tokenization_script();
 				$this->saved_payment_methods();
@@ -770,7 +812,7 @@ class UPE_Payment_Gateway extends WC_Payment_Gateway_WCPay {
 				<div id="wcpay-upe-errors" role="alert"></div>
 				<input id="wcpay-payment-method-upe" type="hidden" name="wcpay-payment-method-upe" />
 				<input id="wcpay_selected_upe_payment_type" type="hidden" name="wcpay_selected_upe_payment_type" />
-
+				<input id="wcpay_intent" type="hidden" name="wcpay_intent" value="<?php echo esc_attr( wp_json_encode( $intent ) ); ?>" />
 			<?php
 			$methods_enabled_for_saved_payments = array_filter( $this->get_upe_enabled_payment_method_ids(), [ $this, 'is_enabled_for_saved_payments' ] );
 			if ( $this->is_saved_cards_enabled() && ! empty( $methods_enabled_for_saved_payments ) ) {

@@ -244,11 +244,6 @@ jQuery( function ( $ ) {
 	 * @param {boolean} isSetupIntent {Boolean} isSetupIntent Set to true if we are on My Account adding a payment method.
 	 */
 	const mountUPEElement = function ( isSetupIntent = false ) {
-		// Do not mount UPE twice.
-		if ( upeElement || paymentIntentId ) {
-			return;
-		}
-
 		// If paying from order, we need to create Payment Intent from order not cart.
 		const isOrderPay = getConfig( 'isOrderPay' );
 		const isCheckout = getConfig( 'isCheckout' );
@@ -266,12 +261,6 @@ jQuery( function ( $ ) {
 
 		intentAction
 			.then( ( response ) => {
-				// I repeat, do NOT mount UPE twice.
-				if ( upeElement || paymentIntentId ) {
-					unblockUI( $upeContainer );
-					return;
-				}
-
 				const { client_secret: clientSecret, id: id } = response;
 				paymentIntentId = id;
 
@@ -303,7 +292,12 @@ jQuery( function ( $ ) {
 					};
 				}
 
+				if ( upeElement ) {
+					upeElement.destroy();
+				}
 				upeElement = elements.create( 'payment', upeSettings );
+				window.rgUpeElement = upeElement;
+				window.rgElements = elements;
 				upeElement.mount( '#wcpay-upe-element' );
 				unblockUI( $upeContainer );
 				upeElement.on( 'change', ( event ) => {
@@ -341,8 +335,7 @@ jQuery( function ( $ ) {
 		if (
 			$( '#wcpay-upe-element' ).length &&
 			! $( '#wcpay-upe-element' ).children().length &&
-			isUPEEnabled &&
-			! upeElement
+			isUPEEnabled
 		) {
 			renameGatewayTitle();
 			mountUPEElement();

@@ -1088,6 +1088,9 @@ class WC_Payment_Gateway_WCPay extends WC_Payment_Gateway_CC {
 		$this->attach_intent_info_to_order( $order, $intent_id, $status, $payment_method, $customer_id, $charge_id, $currency );
 		$this->attach_exchange_info_to_order( $order, $charge_id );
 
+		// Add order note when next action type is card_await_notification.
+		$this->maybe_add_card_await_notification_note( $order, $next_action );
+
 		if ( isset( $response ) ) {
 			return $response;
 		}

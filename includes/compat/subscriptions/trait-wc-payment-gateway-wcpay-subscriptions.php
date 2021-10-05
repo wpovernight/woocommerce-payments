@@ -262,7 +262,7 @@ trait WC_Payment_Gateway_WCPay_Subscriptions_Trait {
 			if ( ! empty( $payment_information ) ) {
 				$note = sprintf(
 					WC_Payments_Utils::esc_interpolated_html(
-						/* translators: %1: the failed payment amount, %2: error message  */
+					/* translators: %1: the failed payment amount, %2: error message  */
 						__(
 							'A payment of %1$s <strong>failed</strong> to complete with the following message: <code>%2$s</code>.',
 							'woocommerce-payments'
@@ -732,16 +732,27 @@ trait WC_Payment_Gateway_WCPay_Subscriptions_Trait {
 		if ( $this->is_subscriptions_enabled() ) {
 			$subscriptions = wcs_get_subscriptions_for_order( $order->get_id() );
 			$subscription  = reset( $subscriptions );
+
 			if ( $subscription ) {
 				$result['setup_future_usage']                                = 'off_session';
 				$result['payment_method_options']['card']['mandate_options'] = [
 					'reference'      => $order->get_id(),
 					'amount'         => WC_Payments_Utils::prepare_amount( $order->get_total(), $order->get_currency() ),
-					'amount_type'    => 'fixed', // TODO: [fixed, maximum] Are there variable subscriptions?
+					'amount_type'    => 'fixed',
 					'start_date'     => $subscription->get_time( 'date_created' ),
 					'interval'       => $subscription->get_billing_period(),
 					'interval_count' => $subscription->get_billing_interval(),
 				];
+			}
+
+			// Multiple subscriptions per order needs:
+			// - Set amount type to maximum, to allow renews of any amount under the order total.
+			// - Set interval to sporadic, to not follow any specific interval.
+			// - Unset interval count, because it doesn't apply anymore.
+			if ( 1 < count( $subscriptions ) ) {
+				$result['payment_method_options']['card']['mandate_options']['amount_type'] = 'maximum';
+				$result['payment_method_options']['card']['mandate_options']['interval']    = 'sporadic';
+				unset( $result['payment_method_options']['card']['mandate_options']['interval_count'] );
 			}
 		}
 

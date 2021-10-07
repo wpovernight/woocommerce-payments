@@ -243,12 +243,14 @@ trait WC_Payment_Gateway_WCPay_Subscriptions_Trait {
 		$additional_api_parameters = [];
 
 		// Include mandate from parent subscription order if exists.
-		$renewals        = wcs_get_subscriptions_for_renewal_order( $renewal_order->get_id() );
-		$parent_order_id = reset( $renewals )->get_parent_id();
-		$parent_order    = wc_get_order( $parent_order_id );
-		$mandate         = $parent_order->get_meta( '_stripe_mandate_id', true );
-		if ( ! empty( $mandate ) ) {
-			$additional_api_parameters['mandate'] = $mandate;
+		$renewals = wcs_get_subscriptions_for_renewal_order( $renewal_order->get_id() );
+		if ( $renewals ) {
+			$parent_order_id = reset( $renewals )->get_parent_id();
+			$parent_order    = wc_get_order( $parent_order_id );
+			$mandate         = $parent_order->get_meta( '_stripe_mandate_id', true );
+			if ( ! empty( $mandate ) ) {
+				$additional_api_parameters['mandate'] = $mandate;
+			}
 		}
 
 		try {

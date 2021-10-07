@@ -144,6 +144,7 @@ class WC_Payment_Gateway_WCPay_Payment_Types extends WP_UnitTestCase {
 	public static function tearDownAfterClass() {
 		WC_Subscriptions::set_wcs_order_contains_subscription( null );
 		WC_Subscriptions::set_wcs_get_subscriptions_for_order( null );
+		WC_Subscriptions::set_wcs_get_subscriptions_for_renewal_order( null );
 	}
 
 	private function mock_wcs_order_contains_subscription( $value ) {
@@ -154,9 +155,26 @@ class WC_Payment_Gateway_WCPay_Payment_Types extends WP_UnitTestCase {
 		);
 	}
 
+	private function mock_wcs_get_subscriptions_for_order( $value ) {
+		WC_Subscriptions::set_wcs_get_subscriptions_for_order(
+			function ( $order ) use ( $value ) {
+				return $value;
+			}
+		);
+	}
+
+	private function mock_wcs_get_subscriptions_for_renewal_order( $value ) {
+		WC_Subscriptions::set_wcs_get_subscriptions_for_renewal_order(
+			function ( $order ) use ( $value ) {
+				return $value;
+			}
+		);
+	}
+
 	public function test_single_payment() {
 		$order = WC_Helper_Order::create_order();
 		$this->mock_wcs_order_contains_subscription( false );
+		$this->mock_wcs_get_subscriptions_for_order( [] );
 
 		$intent = new WC_Payments_API_Intention( 'pi_mock', 1500, 'usd', 'cus_1234', 'pm_56789', new DateTime(), 'succeeded', 'ch_mock', 'client_secret_123' );
 		$this->mock_api_client
@@ -184,8 +202,11 @@ class WC_Payment_Gateway_WCPay_Payment_Types extends WP_UnitTestCase {
 	}
 
 	public function test_initial_subscription_payment() {
-		$order = WC_Helper_Order::create_order();
+		$order        = WC_Helper_Order::create_order();
+		$subscription = new WC_Subscription();
+		$subscription->set_parent( $order );
 		$this->mock_wcs_order_contains_subscription( true );
+		$this->mock_wcs_get_subscriptions_for_order( [ $subscription ] );
 
 		$intent = new WC_Payments_API_Intention( 'pi_mock', 1500, 'usd', 'cus_1234', 'pm_56789', new DateTime(), 'succeeded', 'ch_mock', 'client_secret_123' );
 		$this->mock_api_client
@@ -213,13 +234,14 @@ class WC_Payment_Gateway_WCPay_Payment_Types extends WP_UnitTestCase {
 	}
 
 	public function test_renewal_subscription_payment() {
-		$order = WC_Helper_Order::create_order();
+		$order        = WC_Helper_Order::create_order();
+		$subscription = new WC_Subscription();
+		$subscription->set_parent( $order );
+
 		$this->mock_wcs_order_contains_subscription( true );
-		WC_Subscriptions::set_wcs_get_subscriptions_for_order(
-			function( $parent_order ) use ( $order ) {
-				return $order;
-			}
-		);
+		$this->mock_wcs_get_subscriptions_for_order( [ $subscription ] );
+		$this->mock_wcs_get_subscriptions_for_renewal_order( [] );
+
 		$order->add_payment_token( $this->token );
 
 		$intent = new WC_Payments_API_Intention( 'pi_mock', 1500, 'usd', 'cus_1234', 'pm_56789', new DateTime(), 'succeeded', 'ch_mock', 'client_secret_123' );
@@ -246,4 +268,6 @@ class WC_Payment_Gateway_WCPay_Payment_Types extends WP_UnitTestCase {
 
 		$this->mock_wcpay_gateway->scheduled_subscription_payment( 100, $order );
 	}
+
+	// TODO_TEST: Test renew mandate.
 }

@@ -105,9 +105,10 @@
       <code>WC_Subscription</code>
       <code>WC_Subscription</code>
     </UndefinedDocblockClass>
-    <UndefinedFunction occurrences="2">
+    <UndefinedFunction occurrences="4">
       <code>wcs_get_subscriptions_for_order( $order-&gt;get_id() )</code>
       <code>wcs_is_subscription( $order )</code>
+      <code>wcs_get_subscriptions_for_renewal_order( $order-&gt;get_id() )</code>
     </UndefinedFunction>
   </file>
   <file src="includes/compat/subscriptions/trait-wc-payments-subscriptions-utilities.php">

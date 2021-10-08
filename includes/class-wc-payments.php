@@ -937,13 +937,27 @@ class WC_Payments {
 	public static function ajax_init_woopay() {
 		$session_cookie_name = apply_filters( 'woocommerce_cookie', 'wp_woocommerce_session_' . COOKIEHASH );
 
-		$response = self::$api_client->init_woo_pay(
-			get_current_user_id(),
-			$session_cookie_name,
-			$_COOKIE[ $session_cookie_name ]
-		);
+		$woopay_host = defined( 'WOOPAY_HOST' ) ? WOOPAY_HOST : 'http://host.docker.internal:8090';
+		$url         = $woopay_host . '/wp-json/woopay/init';
+		$body        = [
+			'user_id'              => get_current_user_id(),
+			'session_cookie_name'  => $session_cookie_name,
+			'session_cookie_value' => $_COOKIE[ $session_cookie_name ],
+		];
+		$args        = [
+			'url'     => $url,
+			'method'  => 'POST',
+			'timeout' => 30,
+			'body'    => wp_json_encode( $body ),
+			'headers' => [
+				'Content-Type'  => 'application/json',
+			],
+		];
 
-		echo( wp_json_encode( $response ) );
+		$response_array     = wp_remote_request( $url, $args );
+		$response_body_json = wp_remote_retrieve_body( $response_array );
+
+		echo( $response_body_json );
 		die();
 	}
 }

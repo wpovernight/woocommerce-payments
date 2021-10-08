@@ -1206,18 +1206,6 @@ class WC_Payments_API_Client {
 		);
 	}
 
-	public function init_woo_pay( $user_id, $session_cookie_name, $session_cookie_value ) {
-		return $this->request(
-			[
-				'user_id'              => $user_id,
-				'session_cookie_name'  => $session_cookie_name,
-				'session_cookie_value' => $session_cookie_value,
-			],
-			'woopay/init',
-			self::POST
-		);
-	}
-
 	/**
 	 * Send the request to the WooCommerce Payment API
 	 *

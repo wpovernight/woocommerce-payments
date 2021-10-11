@@ -92,6 +92,12 @@ class WC_Payment_Gateway_WCPay_Subscriptions_Test extends WP_UnitTestCase {
 		);
 	}
 
+	public static function tearDownAfterClass() {
+		WC_Subscriptions::set_wcs_get_subscriptions_for_order( null );
+		WC_Subscriptions::set_wcs_is_subscription( null );
+		WC_Subscriptions::set_wcs_get_subscriptions_for_renewal_order( null );
+	}
+
 	public function test_add_token_to_order_should_add_token_to_subscriptions() {
 		$original_order = WC_Helper_Order::create_order( self::USER_ID );
 		$subscriptions  = [
@@ -642,7 +648,10 @@ class WC_Payment_Gateway_WCPay_Subscriptions_Test extends WP_UnitTestCase {
 
 	public function test_maybe_add_mandate_to_order_payment_single_subscriptions() {
 		$order = WC_Helper_Order::create_order();
-		$this->mock_wcs_get_subscriptions_for_order( [ new WC_Subscription() ] );
+		$sub   = new WC_Subscription();
+		$sub->set_parent( $order );
+
+		$this->mock_wcs_get_subscriptions_for_order( [ $sub ] );
 
 		$this->assertSame(
 			[
@@ -667,7 +676,12 @@ class WC_Payment_Gateway_WCPay_Subscriptions_Test extends WP_UnitTestCase {
 
 	public function test_maybe_add_mandate_to_order_payment_multiple_subscriptions() {
 		$order = WC_Helper_Order::create_order();
-		$this->mock_wcs_get_subscriptions_for_order( [ new WC_Subscription(), new WC_Subscription() ] );
+		$sub1  = new WC_Subscription();
+		$sub2  = new WC_Subscription();
+		$sub1->set_parent( $order );
+		$sub2->set_parent( $order );
+
+		$this->mock_wcs_get_subscriptions_for_order( [ $sub1, $sub2 ] );
 
 		$this->assertSame(
 			[
@@ -676,7 +690,7 @@ class WC_Payment_Gateway_WCPay_Subscriptions_Test extends WP_UnitTestCase {
 					'card' => [
 						'mandate_options' => [
 							'reference'   => $order->get_id(),
-							'amount'      => 5000.0,
+							'amount'      => 10000.0,
 							'amount_type' => 'maximum',
 							'start_date'  => null,
 							'interval'    => 'sporadic',

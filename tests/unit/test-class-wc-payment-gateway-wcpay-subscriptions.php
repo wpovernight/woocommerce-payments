@@ -713,7 +713,7 @@ class WC_Payment_Gateway_WCPay_Subscriptions_Test extends WP_UnitTestCase {
 			->method( 'add_order_note' )
 			->with(
 				$this->equalTo(
-					'The customer must authorize this payment via the pre-debit notification sent to them by their card issuing bank, before September 13, 2020 at 12:26 pm, when the charge will be attempted.'
+					'The customer must authorize this payment via a notification sent to them by the bank which issued their card. The authorization must be completed before September 13, 2020 at 12:26 pm, when the charge will be attempted.'
 				)
 			);
 

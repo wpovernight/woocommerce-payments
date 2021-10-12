@@ -160,3 +160,6 @@ function wcpay_show_old_jetpack_notice() {
 	</div>
 	<?php
 }
+
+// After completeing the WC onboarding profile maybe switch on WCPay Subscriptions functionality.
+add_action( 'woocommerce_onboarding_profile_completed', 'WC_Payments_Features::maybe_enable_wcpay_subscriptions' );

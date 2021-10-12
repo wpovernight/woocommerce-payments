@@ -9,6 +9,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+use Automattic\WooCommerce\Admin\Features\Onboarding;
+
 /**
  * WC Payments Features class
  */
@@ -96,6 +98,27 @@ class WC_Payments_Features {
 	 */
 	public static function is_wcpay_subscriptions_enabled() {
 		return '1' === get_option( self::WCPAY_SUBSCRIPTIONS_FLAG_NAME, '0' );
+	}
+
+	/**
+	 * Enables the WCPay Subscriptions feature when a merchant opts to sell subscription products via the WC onboarding profile.
+	 *
+	 * At launch only US-based stores are eligible.
+	 */
+	public static function maybe_enable_wcpay_subscriptions() {
+		$base_location = wc_get_base_location();
+
+		// Only stores based in the US which enabled the Subscriptions products are eligible for the feature.
+		if ( ! isset( $base_location['country'] ) || 'US' !== $base_location['country'] ) {
+			return;
+		}
+
+		$onboarding_data = get_option( Onboarding::PROFILE_DATA_OPTION, [] );
+
+		// Switch on the feature if the merchant chose the subscriptions product type.
+		if ( isset( $onboarding_data['product_types'] ) && is_array( $onboarding_data['product_types'] ) && in_array( 'subscriptions', $onboarding_data['product_types'], true ) ) {
+			update_option( self::WCPAY_SUBSCRIPTIONS_FLAG_NAME, '1' );
+		}
 	}
 
 	/**

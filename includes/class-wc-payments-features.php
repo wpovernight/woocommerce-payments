@@ -110,6 +110,7 @@ class WC_Payments_Features {
 				'upeSettingsPreview'      => self::is_upe_settings_preview_enabled(),
 				'multiCurrency'           => self::is_customer_multi_currency_enabled(),
 				'accountOverviewTaskList' => self::is_account_overview_task_list_enabled(),
+				'subscriptions'           => self::is_wcpay_subscriptions_enabled(),
 			]
 		);
 	}

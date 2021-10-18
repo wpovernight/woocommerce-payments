@@ -355,6 +355,7 @@ class UPE_Payment_Gateway extends WC_Payment_Gateway_WCPay {
 						'redirect_url' => '',
 					];
 				}
+				$additional_api_parameters = $this->maybe_add_mandate_to_order_payment( $order );
 
 				$updated_payment_intent  = $this->payments_api_client->update_intention(
 					$payment_intent_id,
@@ -365,7 +366,8 @@ class UPE_Payment_Gateway extends WC_Payment_Gateway_WCPay {
 					$this->get_metadata_from_order( $order, $payment_type ),
 					$this->get_level3_data_from_order( $order ),
 					$selected_upe_payment_type,
-					$payment_country
+					$payment_country,
+					$additional_api_parameters
 				);
 				$last_payment_error_code = $updated_payment_intent->get_last_payment_error()['code'] ?? '';
 				if ( 'card_declined' === $last_payment_error_code ) {

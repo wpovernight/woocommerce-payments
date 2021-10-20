@@ -8,10 +8,10 @@
  * Woo: 5278104:bf3cf30871604e15eec560c962593c1f
  * Text Domain: woocommerce-payments
  * Domain Path: /languages
- * WC requires at least: 4.0
- * WC tested up to: 5.6
+ * WC requires at least: 4.4
+ * WC tested up to: 5.7.1
  * Requires WP: 5.6
- * Version: 3.0.0
+ * Version: 3.1.0
  *
  * @package WooCommerce\Payments
  */
@@ -21,8 +21,10 @@ defined( 'ABSPATH' ) || exit;
 define( 'WCPAY_PLUGIN_FILE', __FILE__ );
 define( 'WCPAY_ABSPATH', __DIR__ . '/' );
 define( 'WCPAY_MIN_WC_ADMIN_VERSION', '0.23.2' );
+define( 'WCPAY_SUBSCRIPTIONS_ABSPATH', __DIR__ . '/vendor/woocommerce/subscriptions-core/' );
 
 require_once __DIR__ . '/vendor/autoload_packages.php';
+require_once __DIR__ . '/includes/class-wc-payments-features.php';
 
 /**
  * Plugin activation hook.
@@ -98,6 +100,38 @@ function wcpay_init() {
 // If you change the priority of this action, you'll need to change it in the wcpay_check_old_jetpack_version function too.
 add_action( 'plugins_loaded', 'wcpay_init', 11 );
 
+if ( ! function_exists( 'wcpay_init_subscriptions_core' ) ) {
+
+	/**
+	 * Initialise subscriptions-core if WC Subscriptions (the plugin) isn't loaded
+	 */
+	function wcpay_init_subscriptions_core() {
+		if ( ! WC_Payments_Features::is_wcpay_subscriptions_enabled() ) {
+			return;
+		}
+
+		$subscriptions_plugin_slug = 'woocommerce-subscriptions/woocommerce-subscriptions.php';
+		$wcs_core_plugin_slug      = 'woocommerce-subscriptions-core/woocommerce-subscriptions-core.php';
+		$is_subscriptions_active   = ( isset( $_GET['action'], $_GET['plugin'] ) && 'activate' === $_GET['action'] && $subscriptions_plugin_slug === $_GET['plugin'] ) || Automattic\WooCommerce\Admin\PluginsHelper::is_plugin_active( $subscriptions_plugin_slug ); //phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$is_wcs_core_active        = ( isset( $_GET['action'], $_GET['plugin'] ) && 'activate' === $_GET['action'] && $wcs_core_plugin_slug === $_GET['plugin'] ) || Automattic\WooCommerce\Admin\PluginsHelper::is_plugin_active( $wcs_core_plugin_slug ); //phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$wcs_core_path             = $is_wcs_core_active ? WP_PLUGIN_DIR . '/woocommerce-subscriptions-core/' : WCPAY_SUBSCRIPTIONS_ABSPATH;
+
+		/**
+		 * If the current request is to activate subscriptions, don't load the subscriptions-core package.
+		 *
+		 * WP loads the newly activated plugin's base file later than `plugins_loaded`, and so there's no opportunity for us to not load our core feature set on a consistent hook.
+		 * We also cannot init subscriptions core too late, because if we do, we miss hooks that register the subscription post types etc.
+		 */
+		if ( $is_subscriptions_active ) {
+			return;
+		}
+
+		require_once $wcs_core_path . 'includes/class-wc-subscriptions-core-plugin.php';
+		new WC_Subscriptions_Core_Plugin();
+	}
+}
+wcpay_init_subscriptions_core();
+
 /**
  * Check if WCPay is installed alongside an old version of Jetpack (8.1 or earlier). Due to the autoloader code in those old
  * versions, the Jetpack Config initialization code would just crash the site.
@@ -129,16 +163,24 @@ function wcpay_show_old_jetpack_notice() {
 
 add_filter( 'woocommerce_store_api_disable_nonce_check', '__return_true' );
 
-add_filter( 'determine_current_user', function( $user ) {
-	if ( $user ) {
-		return $user;
-	}
-	$headers = getallheaders();
-	if ( ! isset( $headers['X-WooPay-User'] ) || ! is_numeric( $headers['X-WooPay-User'] ) ) {
-		return $user;
-	}
+add_filter(
+	'determine_current_user',
+	function( $user ) {
+		if ( $user ) {
+			return $user;
+		}
+		$headers = getallheaders();
+		if ( ! isset( $headers['X-WooPay-User'] ) || ! is_numeric( $headers['X-WooPay-User'] ) ) {
+			return $user;
+		}
 
-	add_filter( 'woocommerce_cookie', function( $c ) { return 'woopay_session'; } );
+		add_filter(
+			'woocommerce_cookie',
+			function( $c ) {
+				return 'woopay_session';
+			}
+		);
 
-	return (int) $headers['X-WooPay-User'];
-} );
+		return (int) $headers['X-WooPay-User'];
+	}
+);

@@ -58,7 +58,14 @@ class WC_Payments_Http implements WC_Payments_Http_Interface {
 			);
 		}
 
-		$args['blog_id'] = $this->get_blog_id();
+		// Use the defined client blog ID instead of the local platform ID.
+		// TODO: Make this dynamically pull the blog ID from stored WooPay session data.
+		if ( defined( 'WCPAY_LOCAL_BLOG_ID' ) ) {
+			$args['blog_id'] = WCPAY_LOCAL_BLOG_ID;
+		} else {
+			// Default to the WooPay blog ID
+			$args['blog_id'] = $this->get_blog_id();
+		}
 
 		if ( $use_user_token ) {
 			$args['user_id'] = $this->connection_manager->get_connection_owner_id();

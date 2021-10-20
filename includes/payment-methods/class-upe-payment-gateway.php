@@ -423,10 +423,12 @@ class UPE_Payment_Gateway extends WC_Payment_Gateway_WCPay {
 			return;
 		}
 
-		$is_nonce_valid = check_admin_referer( 'wcpay_process_redirect_order_nonce' );
-		if ( ! $is_nonce_valid || empty( $_GET['wc_payment_method'] ) ) {
-			return;
-		}
+		// Remove nonce check to allow WooPay transaction
+		// TODO: Provide some check to validate the request (perhaps passing a nonce around will work here?)
+		// $is_nonce_valid = check_admin_referer( 'wcpay_process_redirect_order_nonce' );
+		// if ( ! $is_nonce_valid || empty( $_GET['wc_payment_method'] ) ) {
+		// 	return;
+		// }
 
 		if ( ! empty( $_GET['payment_intent_client_secret'] ) ) {
 			$intent_id = isset( $_GET['payment_intent'] ) ? wc_clean( wp_unslash( $_GET['payment_intent'] ) ) : '';

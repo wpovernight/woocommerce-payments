@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "3f7781ef0f1206b7c3dc0471c0bc8a48",
+    "content-hash": "239239c492ca1db5cc9be75415ad2bbd",
     "packages": [
         {
             "name": "automattic/jetpack-a8c-mc-stats",
@@ -175,16 +175,16 @@
         },
         {
             "name": "automattic/jetpack-connection",
-            "version": "v1.30.5",
+            "version": "v1.30.10",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Automattic/jetpack-connection.git",
-                "reference": "2c0f6a8c37601afe5497b2ba8a62e119684e3e53"
+                "reference": "844cb5264ffd2bc41e641016a3b5c57cb03ae70e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Automattic/jetpack-connection/zipball/2c0f6a8c37601afe5497b2ba8a62e119684e3e53",
-                "reference": "2c0f6a8c37601afe5497b2ba8a62e119684e3e53",
+                "url": "https://api.github.com/repos/Automattic/jetpack-connection/zipball/844cb5264ffd2bc41e641016a3b5c57cb03ae70e",
+                "reference": "844cb5264ffd2bc41e641016a3b5c57cb03ae70e",
                 "shasum": ""
             },
             "require": {
@@ -199,10 +199,10 @@
                 "automattic/jetpack-tracking": "^1.13"
             },
             "require-dev": {
-                "automattic/jetpack-changelogger": "^2.0",
+                "automattic/jetpack-changelogger": "^3.0",
                 "automattic/wordbless": "@dev",
                 "brain/monkey": "2.6.0",
-                "yoast/phpunit-polyfills": "1.0.1"
+                "yoast/phpunit-polyfills": "1.0.2"
             },
             "type": "library",
             "extra": {
@@ -230,9 +230,9 @@
             ],
             "description": "Everything needed to connect to the Jetpack infrastructure",
             "support": {
-                "source": "https://github.com/Automattic/jetpack-connection/tree/v1.30.5"
+                "source": "https://github.com/Automattic/jetpack-connection/tree/v1.30.10"
             },
-            "time": "2021-09-28T18:20:00+00:00"
+            "time": "2021-10-19T10:39:56+00:00"
         },
         {
             "name": "automattic/jetpack-constants",
